@@ -1,29 +1,30 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize  = require('../mysql');
 
-const userSchema = mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  username: { type: String, required: true}
+const User = sequelize.define('User', {
+
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    tableName: 'users',
+    timestamps: false
 });
 
-userSchema.plugin(uniqueValidator);
-
-module.exports = mongoose.model('User', userSchema);
-
-const mysql = require('mysql');
-
-const db = mysql.createConnection({
-   host: "localhost",
-   user: "nom_utilisateur",
-   password: "mot_de_passe_utilisateur"
- });
-
- db.connect(function(err) {
-   if (err) throw err;
-   console.log("Connecté à la base de données MySQL!");
-  db.query("CREATE DATABASE mabdd", function (err, result) {
-       if (err) throw err;
-       console.log("Base de données créée !");
-     });
- });
+// `sequelize.define` also returns the model
+console.log(User === sequelize.models.User); // true
+module.exports = User;
