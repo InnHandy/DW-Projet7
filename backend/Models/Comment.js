@@ -4,7 +4,7 @@ const sequelize  = require('../mysql');
 const Comment = sequelize.define('Comment', {
     
 
-    id: {
+    comment_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
@@ -21,17 +21,37 @@ const Comment = sequelize.define('Comment', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    nb_like: {
+    comments_nb_like: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    nb_dislike: {
+    comments_nb_dislike: {
         type: DataTypes.INTEGER,
         allowNull: false
     }, 
+    comments_users_like: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        get(){
+            return this.getDataValue('comments_users_like').split(';')
+        },
+        set(value){
+            this.setDataValue('comments_users_like',val.join(';'));
+        },
+    },
+    comments_users_dislike: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        get(){
+            return this.getDataValue('comments_users_like').split(';')
+        },
+        set(value){
+            this.setDataValue('comments_users_like',value.join(';'));
+        },
+    },
 
 }, {
-    tableName: 'posts',
+    tableName: 'comments',
     timestamps: false
 });
 

@@ -10,7 +10,7 @@ const Post = sequelize.define('Post', {
     },
     image: {
         type: DataTypes.STRING.BINARY,
-        allowNull: false
+        allowNull: true
     },
     title: {
         type: DataTypes.STRING,
@@ -18,20 +18,40 @@ const Post = sequelize.define('Post', {
     },
     created_at: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: true
     },
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    nb_like: {
+    posts_nb_like: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
-    nb_dislike: {
+    posts_nb_dislike: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     }, 
+    posts_users_like: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        get(){
+            return this.getDataValue('posts_users_like').split(';')
+        },
+        set(value){
+            this.setDataValue('posts_users_like',value.join(';'));
+        },
+    },
+    posts_users_dislike: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        get(){
+            return this.getDataValue('posts_users_like').split(';')
+        },
+        set(value){
+            this.setDataValue('posts_users_like',val.join(';'));
+        },
+    },
 
 }, {
     tableName: 'posts',

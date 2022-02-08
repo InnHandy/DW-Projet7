@@ -1,143 +1,76 @@
-const Sauces = require('../models/sauces');
+const Comment = require('../Models/Comment');
 const fs = require('fs');
-const sauces = require('../models/sauces');
-
-let saucePourLike = {};
 
 
-exports.createSauce = (req, res, next) => {
-  delete req.body._id;
-  const sauce = new Sauces({
-       ...JSON.parse(req.body.sauce),
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+exports.createComment = async (req, res, next) => {
+  const comment = await Comment.create({
+    ...JSON.parse(req.body.comment),
+    image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`   
   });
-  sauce.save()
-    .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
-    .catch(error => res.status(400).json({ error }));
+  res.status(201).json({ comment}) 
 };
 
 
-exports.getOneSauce = (req, res, next) => {
-  Sauces.findOne({
-    _id: req.params.id
-  }).then(
-    (sauce) => {
-      res.status(200).json(sauce);
-      saucePourLike= sauce;
-      console.log(saucePourLike);
-    }
-  ).catch(
-    (error) => {
-      res.status(404).json({
-        error: error
-      });
-    }
-  );
+exports.getOneComment = async (req, res, next) => {
+  const comment = await Comment.findOne({ where: { user_id: req.params.id } });
+  res.status(201).json({ comment}); 
 };
 
-exports.likeSauce = (req, res, next) => {
-  delete req.body._id;
-  Sauces.findOne({_id: req.params.id })
-  .then(
-          (sauce) => {
-            if (!sauce.usersLiked.includes(req.body.userId) && req.body.like ===1)
+exports.likeComment = async (req, res, next) => {
+  const comment = await Comment.findOne({ where: { user_id: req.params.id } }) 
+
+            if (!comment.comments_users_like.split(';').includes(req.body.user_id) && req.body.like ===1)
             {
-              Sauces.updateOne(
-                {_id: req.params.id},
-                {
-                  /*
-               sauce.usersLiked.push(req.body.userId)
-               sauce.likes += 1;
-               Sauces.updateOne(
-                   {_id: req.params.id},
-                   ...sauce
-               )*/
-                  $inc : {likes : 1},
-                  $push : {usersLiked : req.body.userId}
-                },
-              )
-              .then(()=> res.status(201).json({message : "Sauce like +1"}))
-              .catch((error)=> res.status(400).json({error}))
+              comment.comments_users_like += req.body.user_id ;
+               comment.comment_nb_likes += 1;
+               res.status(201).json({message : "Post like +1"});
             }
 
-            if (sauce.usersLiked.includes(req.body.userId) && req.body.like ===0)
+            if (comment.comments_users_like.split(';').includes(req.body.user_id)
+             && req.body.like ===0)
             {
-              Sauces.updateOne(
-                {_id: req.params.id},
-                {
-                  $inc : {likes : -1},
-                  $pull : {usersLiked : req.body.userId}
-                },
-              )
-              .then(()=> res.status(201).json({message : "Sauce like -1"}))
-              .catch((error)=> res.status(400).json({error}))
-              }
+              post.posts_users_like += req.body.user_id ;
+              post.post_nb_likes += -1;
+              res.status(201).json({message : "Post like -1"});
+           }
 
-              if (!sauce.usersDisliked.includes(req.body.userId) && req.body.like ===-1)
+              if (!comment.comments_users_like.split(';').includes(req.body.user_id) && req.body.like ===1)
               {
-                Sauces.updateOne(
-                  {_id: req.params.id},
-                  {
-                    $inc : {dislikes : 1},
-                    $push : {usersDisliked : req.body.userId}
-                  },
-                )
-                .then(()=> res.status(201).json({message : "Sauce dislike +1"}))
-                .catch((error)=> res.status(400).json({error}))
-              }
+                comment.comments_users_dislike += req.body.user_id ;
+                 post.post_nb_dislikes += 1;
+                res.status(201).json({message : "Post dislike +1"});
+             }
   
-              if (sauce.usersDisliked.includes(req.body.userId) && req.body.like==0)
-              {
-                Sauces.updateOne(
-                  {_id: req.params.id},
-                  {
-                    $inc : {dislikes : -1},
-                    $pull : {usersDisliked : req.body.userId}
-                  },
-                )
-                .then(()=> res.status(201).json({message : "Sauce dislike -1"}))
-                .catch((error)=> res.status(400).json({error}))
-                }
-          })
-    .catch((error) => {res.status(404).json({error: error})})
+              if (comment.comments_users_like.split(';').includes(req.body.user_id)
+              && req.body.like ===0)
+             {
+               post.posts_users_dislike += req.body.user_id ;
+               comment.comment_nb_likes += -1;
+                res.status(201).json({message : "Post dislike -1"});
+             }
 
   };
 
 
-exports.modifySauce = (req, res, next) => {
-  const sauceObject = req.file ?
+exports.modifyComment = async (req, res, next) => {
+  const commentObject = req.file ?
     {
-      ...JSON.parse(req.body.sauce),
+      ...JSON.parse(req.body.comment),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
-  sauces.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Objet modifié !'}))
-    .catch(error => res.status(400).json({ error }));
+    await commentObject.update();
+    res.status(200).json({ message: 'Objet modifié !'}) 
 };
 
-exports.deleteSauce = (req, res, next) => {
-  Sauces.findOne({ _id: req.params.id })
-    .then(sauce => {
-      const filename = sauce.imageUrl.split('/images/')[1];
-      fs.unlink(`images/${filename}`, () => {
-        sauces.deleteOne({ _id: req.params.id })
-          .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
-          .catch(error => res.status(400).json({ error }));
-      });
-    })
-    .catch(error => res.status(500).json({ error }));
+exports.deleteComment = async (req, res, next) => {
+  const comment = await Comment.findOne({ where: { user_id: req.params.id } }) 
+  await comment.destroy();
+  const filename = post.imageUrl.split('/images/')[1];
+      fs.unlink(`images/${filename}`, () => {res.status(200).json({ message: 'Objet supprimé !'})})  
+      ;
 };
 
-exports.getAllSauces = (req, res, next) => {
-  Sauces.find().then(
-    (sauces) => {
-      res.status(200).json(sauces);
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
+exports.getAllComments = async (req, res, next) => {
+  const comments = await Comment.findAll();
+    return res.status(200).json(comments);
 };
