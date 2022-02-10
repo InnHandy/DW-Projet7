@@ -8,9 +8,11 @@ const Post = sequelize.define('Post', {
         autoIncrement: true,
         primaryKey: true
     },
-    image: {
-        type: DataTypes.STRING.BINARY,
-        allowNull: true
+    link: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        isUrl: true, 
+
     },
     title: {
         type: DataTypes.STRING,
@@ -18,7 +20,8 @@ const Post = sequelize.define('Post', {
     },
     created_at: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: true,
+        defaultValue: DataTypes.NOW
     },
     user_id: {
         type: DataTypes.INTEGER,
@@ -26,31 +29,23 @@ const Post = sequelize.define('Post', {
     },
     posts_nb_like: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: true,
+        defaultValue : 0,
     },
     posts_nb_dislike: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: true,
+        defaultValue : 0,
     }, 
     posts_users_like: {
-        type: DataTypes.STRING,
+        type: DataTypes.JSON,
         allowNull: true,
-        get(){
-            return this.getDataValue('posts_users_like').split(';')
-        },
-        set(value){
-            this.setDataValue('posts_users_like',value.join(';'));
-        },
+        defaultValue : [],
     },
     posts_users_dislike: {
-        type: DataTypes.STRING,
+        type: DataTypes.JSON,
         allowNull: true,
-        get(){
-            return this.getDataValue('posts_users_like').split(';')
-        },
-        set(value){
-            this.setDataValue('posts_users_like',val.join(';'));
-        },
+        defaultValue : [],
     },
 
 }, {
@@ -61,3 +56,4 @@ const Post = sequelize.define('Post', {
 // `sequelize.define` also returns the model
 console.log(Post === sequelize.models.Post); // true
 module.exports = Post;
+

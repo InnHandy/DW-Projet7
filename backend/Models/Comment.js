@@ -23,31 +23,23 @@ const Comment = sequelize.define('Comment', {
     },
     comments_nb_like: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true,
+        defaultValue : 0,
     },
     comments_nb_dislike: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true,
+        defaultValue : 0,
     }, 
     comments_users_like: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        get(){
-            return this.getDataValue('comments_users_like').split(';')
-        },
-        set(value){
-            this.setDataValue('comments_users_like',val.join(';'));
-        },
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue : [],
     },
     comments_users_dislike: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        get(){
-            return this.getDataValue('comments_users_like').split(';')
-        },
-        set(value){
-            this.setDataValue('comments_users_like',value.join(';'));
-        },
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue : [],
     },
 
 }, {

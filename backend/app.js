@@ -4,10 +4,8 @@ const app = express();
 require('dotenv').config({path:'./.env'});
 const userRoutes = require('./Routes/UsersRouter');
 const postRoutes = require('./Routes/Post');
-/*
-
 const commentRoutes = require('./Routes/Comment');
-*/
+
 //Erreur CORS
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,8 +17,10 @@ app.use((req, res, next) => {
 // pour acceder au body lors des requetes POST
 app.use(express.json());
 
+
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/posts/:id/comments', commentRoutes);
 
 
 module.exports = app;
