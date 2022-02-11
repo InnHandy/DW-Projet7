@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const commentsCtrl = require('../Controllers/Comment');
 
-const commentsCtrl = require('../controllers/Comment');
 router.get('/', commentsCtrl.getAllComments);
 router.post('/', commentsCtrl.createComment);
 router.post('/:comment_id/like', commentsCtrl.likeComment);

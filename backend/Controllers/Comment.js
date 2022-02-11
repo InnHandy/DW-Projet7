@@ -1,76 +1,87 @@
 const Comment = require('../Models/Comment');
-const fs = require('fs');
+require('dotenv').config({path:'./.env'});
 
+exports.getAllComments = async (req, res, next) => {
 
-exports.createComment = async (req, res, next) => {
-  const comment = await Comment.create({
-    ...JSON.parse(req.body.comment),
-    image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`   
-  });
-  res.status(201).json({ comment}) 
-};
-
-
-exports.getOneComment = async (req, res, next) => {
-  const comment = await Comment.findOne({ where: { user_id: req.params.id } });
-  res.status(201).json({ comment}); 
-};
-
-exports.likeComment = async (req, res, next) => {
-  const comment = await Comment.findOne({ where: { user_id: req.params.id } }) 
-
-            if (!comment.comments_users_like.split(';').includes(req.body.user_id) && req.body.like ===1)
-            {
-              comment.comments_users_like += req.body.user_id ;
-               comment.comment_nb_likes += 1;
-               res.status(201).json({message : "Post like +1"});
-            }
-
-            if (comment.comments_users_like.split(';').includes(req.body.user_id)
-             && req.body.like ===0)
-            {
-              post.posts_users_like += req.body.user_id ;
-              post.post_nb_likes += -1;
-              res.status(201).json({message : "Post like -1"});
-           }
-
-              if (!comment.comments_users_like.split(';').includes(req.body.user_id) && req.body.like ===1)
-              {
-                comment.comments_users_dislike += req.body.user_id ;
-                 post.post_nb_dislikes += 1;
-                res.status(201).json({message : "Post dislike +1"});
-             }
-  
-              if (comment.comments_users_like.split(';').includes(req.body.user_id)
-              && req.body.like ===0)
-             {
-               post.posts_users_dislike += req.body.user_id ;
-               comment.comment_nb_likes += -1;
-                res.status(201).json({message : "Post dislike -1"});
-             }
-
+    Comment.findAll()
+            .then((comments)=> res.status(200).json(comments))
+            .catch((error)=> res.status(400).json({error}))
   };
 
+exports.createComment = (req, res, next) => {
+    Comment.create({
+        texte: req.body.texte,
+        post_id : req.body.post_id,
+        user_id : req.body.user_id 
+    })
+    .then( (comment) => res.status(201).json({comment}) )
+    .catch((error)=> res.status(400).json({error}))
+};
+
+exports.getOneComment = async (req, res, next) => {
+    const comment = await Comment.findOne({ where: { comment_id: req.params.comment_id } });//({ where: { user_id: 1 } });
+    return res.status(201).json({comment}); 
+  };
+     
+exports.likeComment = async (req, res, next) => {
+    Comment.findOne({where: {comment_id: req.params.comment_id}}) //({ where: { user_id: req.params.id } });
+        .then((comment) => {
+            console.log('salut')
+            console.log(comment)
+            console.log(typeof comment.comments_users_like)
+            let array_of_users_likes =  JSON.parse(comment.comments_users_like)
+            console.log(array_of_users_likes)
+            console.log(typeof array_of_users_likes)
+            let array_of_users_dislikes =  JSON.parse(comment.comments_users_dislike)
+
+            if (req.body.like === 1 && !array_of_users_likes.includes(req.body.user_id)) {
+                array_of_users_likes.push(req.body.user_id)
+                comment.comments_nb_like += 1;
+                comment.comments_users_like = JSON.stringify(array_of_users_likes)
+                comment.save()
+                res.status(200).json('like !')
+            }
+
+            if (req.body.like === 0 && array_of_users_likes.includes(req.body.user_id)) {
+                array_of_users_likes.splice(array_of_users_likes.indexOf(req.body.user_id), 1)
+                comment.comments_nb_like -= 1;
+                comment.comments_users_like = JSON.stringify(array_of_users_likes)
+                comment.save()
+                res.status(200).json('unlike !')
+            }
+
+            if (req.body.like === 0 && array_of_users_dislikes.includes(req.body.user_id)) {
+
+                array_of_users_dislikes.splice(array_of_users_dislikes.indexOf(req.body.user_id), 1)
+                comment.comments_nb_dislike -= 1;
+                comment.comments_users_dislike = JSON.stringify(array_of_users_dislikes)
+                comment.save()
+                res.status(200).json('undislike !')
+            }
+
+            if (req.body.like === -1 && !array_of_users_dislikes.includes(req.body.user_id)) {
+                array_of_users_dislikes.push(req.body.user_id)
+                comment.comments_users_dislike += 1;
+                comment.comments_users_dislike = JSON.stringify(array_of_users_dislikes)
+                comment.save()
+                res.status(200).json('dislike !')
+            }
+        })
+        .catch((error) => res.status(400).json({error}))
+};
 
 exports.modifyComment = async (req, res, next) => {
-  const commentObject = req.file ?
-    {
-      ...JSON.parse(req.body.comment),
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
-    await commentObject.update();
-    res.status(200).json({ message: 'Objet modifié !'}) 
+
+    await Comment.update(req.body, { where: { comment_id: req.params.comment_id } });
+    Comment.findOne({ where: { comment_id: req.params.comment_id } })
+        .then((comment) =>  res.status(200).json(comment))
+        .catch((error) => res.status(404).json(error))
+
 };
 
 exports.deleteComment = async (req, res, next) => {
-  const comment = await Comment.findOne({ where: { user_id: req.params.id } }) 
+  const comment = await Comment.findOne({ where: { comment_id: req.params.comment_id   } }) //({ where: { user_id: req.params.id } });
   await comment.destroy();
-  const filename = post.imageUrl.split('/images/')[1];
-      fs.unlink(`images/${filename}`, () => {res.status(200).json({ message: 'Objet supprimé !'})})  
-      ;
+  res.status(201).json({message : "objet supprimé"});
 };
 
-exports.getAllComments = async (req, res, next) => {
-  const comments = await Comment.findAll();
-    return res.status(200).json(comments);
-};
