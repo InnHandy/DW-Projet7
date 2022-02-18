@@ -70,15 +70,15 @@ export default {
             fetch(url, options)
                 .then(res => res.json())
                 .then((res) => {
-                    if (res.userId && res.token) {
-                        localStorage.setItem("userId", res.userId)
+                    if (res.id && res.token) {
+                        localStorage.setItem("userId", res.id)
                         localStorage.setItem("token", res.token)
-                        localStorage.setItem("isAdmin", res.isAdmin);
+                       // localStorage.setItem("isAdmin", res.isAdmin);
                         console.log(localStorage)
-                        this.$router.push("message");
-                        alert(" 🙋‍♂️ Bienvenue sur Groupomania Connect ! Connectez-vous dès à présent ! 🙋‍♀️");
+                        this.$router.push("listposts");
+                        alert("Bienvenue sur Groupomania Connect ! Connectez-vous dès à présent !");
                     } else {
-                        alert(" 🚨 Mot de passe incorrect ! ");
+                        alert(" Mot de passe incorrect ! ");
                     }
                 })
                 .catch(error => console.log(error))

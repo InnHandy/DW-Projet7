@@ -40,7 +40,7 @@
           <button>Connec</button>                                       
         </form> 
     </div>   
-        <div class="col-1"><p>Vous avez déjà un compte ? <router-link to="/">Connectez-vous</router-link></p></div> 
+        <div class="col-1"><p>Vous avez déjà un compte ? <router-link to="/login">Connectez-vous</router-link></p></div> 
     </div>
   </div> 
 </template>
@@ -79,13 +79,10 @@ export default {
             fetch(url, options)
                 .then(res => res.json())
                 .then((res) => {
-                    /*if (res.userId && res.token){*/
-                    localStorage.setItem("userId", res.userId);
-                    localStorage.setItem("token", res.token);
+                    localStorage.setItem("userId", res.id);
+                 
                     console.log(localStorage)
                     this.$router.push("/login");
-                   
-                    /*} */
                 })
                 .catch(error => console.log(error))
         }

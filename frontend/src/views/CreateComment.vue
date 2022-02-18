@@ -31,14 +31,14 @@
             <form id="form-signup" >
               <div class="form-group">
                 <label for="title">Titre du message :</label>
-                <input type="text" id="title" name="title" class="form-control" required v-model="inputMessage.title"/>
+                <input type="text" id="title" name="title" class="form-control" required v-model="inputComment.title"/>
               </div>
               <div class="form-group">
                 <label for="content">Contenu :</label>
-                <textarea type="text" id="content" name="content" rows="10" class="form-control" required v-model="inputMessage.content"></textarea>
+                <textarea type="text" id="link" name="link" rows="10" class="form-control" required v-model="inputComment.link"></textarea>
               </div>
             </form>              
-             <button v-on:click="sendMessage" >Envoyer</button> 
+             <button v-on:click="sendComment" >Envoyer</button> 
           </div> 
         </div>
         </div>
@@ -47,22 +47,22 @@
 
 <script >
 export default {
+
     data() {
         return {
-            answer: "",
-            answers: [],
+            comments: [],
         }
     },
     methods: {
         createAnswer() {
-            let inputContent = {
-                "content": this.content,
-                "messageId": this.messageId
-            }
-            let url = "http://localhost:3000/api/answers/new"
+            let inputComment = {
+                "title": this.title,
+                "link": this.link
+            };
+            let url = "http://localhost:3000/api/comment/" + '${comment.comment_id}';
             let options = {
                 method: "POST",
-                body: JSON.stringify(inputContent),
+                body: JSON.stringify(inputComment),
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem("token"),
                     'Content-Type': 'application/json'
@@ -73,9 +73,9 @@ export default {
                 .then((res) => {
                     console.log(res)
                     if (res.ok) {
-                        this.content = {}
+                        this.title = {}
                     } else {
-                        alert("Commentaire envoyé 🖅");
+                        alert("Post envoyé");
                     }
                 })
                 .then(window.location.reload())

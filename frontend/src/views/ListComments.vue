@@ -75,11 +75,11 @@ export default {
     },
     like(comment_id) {
 
-      console.log('like post ' + comment_id)
+      console.log('like comment ' + comment_id)
       this.comments_users_like.push(comment_id)
     },
     dislike(comment_id) {
-      console.log('dislike post ' + comment_id)
+      console.log('dislike comment ' + comment_id)
       this.comments_users_disLike.push(comment_id)
     },
   },

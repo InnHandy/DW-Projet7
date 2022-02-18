@@ -19,7 +19,7 @@
       </div>
             <div class="row">
                 <div class="col-6">
-                <h2>Gestion du compte de {{ userAccount.firstname }} {{ userAccount.lastname }}</h2>
+                <h2>Gestion du compte de {{ userAccount.username }} {{ userAccount.email }}</h2>
                 <button @click="deleteAccount" class="accountbutton">Supprimez votre compte</button>  
             </div> 
             </div> 
@@ -34,21 +34,16 @@ export default {
     data() {
         return {
             userAccount: {
-                userId: localStorage.getItem("userId"),
-                firstname: "",
-                lastname: "",
-                createdAt: "",
-                jobtitle: ""
-            },
+                id: localStorage.getItem("id"),
+                username: "",
+                email: "",
             inputAccount: {
-                lastname: "",
-                firstname: "",
-                jobtitle: ""
+            
             }
         }
     },
     mounted() {
-        let url = `http://localhost:3000/api/auth/${ this.userAccount.userId }`;
+        let url = `http://localhost:3000/api/auth/${ this.userAccount.id }`;
         let options = {
             method: "GET",
             headers: {
@@ -59,10 +54,9 @@ export default {
             .then(response => response.json())
             .then(data => {
                 console.log(data)
-                this.userAccount.firstname = data.firstname;
-                this.userAccount.lastname = data.lastname;
-                this.userAccount.createdAt = data.createdAt;
-                this.userAccount.jobtitle = data.jobtitle;
+                this.userAccount.username = data.username;
+                this.userAccount.email = data.email;
+                this.userAccount.password = data.password;
             })
 
             .catch(error => console.log(error))
@@ -70,7 +64,7 @@ export default {
 
     methods: {
         getOneAccount() {
-            let url = `http://localhost:3000/api/auth/${ this.userAccount.userId }`;
+            let url = `http://localhost:3000/api/users/${ this.userAccount.userId }`;
             let options = {
                 method: "GET",
                 headers: {
@@ -81,15 +75,15 @@ export default {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data)
-                    this.userAccount.firstname = data.firstname;
-                    this.userAccount.lastname = data.lastname;
-                    this.userAccount.jobtitle = data.jobtitle;
+                    this.userAccount.username = data.username;
+                    this.userAccount.email = data.email;
+                    this.userAccount.password = data.password;
                 })
                 .catch(error => console.log(error))
-        },
+        };
 
         deleteAccount() {
-            let url = `http://localhost:3000/api/auth/${ this.userAccount.userId }`;
+            let url = `http://localhost:3000/api/users/${ this.userAccount.id }`;
             let options = {
                 method: "DELETE",
                 headers: {
@@ -99,16 +93,15 @@ export default {
             fetch(url, options)
                 .then((response) => {
                     console.log(response);
-                    localStorage.clear();
-                    alert("Suppression du compte confirmée ! 😢");
+               //     localStorage.clear();
+                    alert("Suppression du compte confirmée !");
                 })
                 .then(this.$router.push("/signup"))
                 .catch(error => console.log(error))
-        },
-    },
+        }
+    }
 } 
 </script>
 
-<style lang="css">
-
+<style>
 </style>

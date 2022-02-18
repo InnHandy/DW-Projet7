@@ -22,7 +22,7 @@
             <div class="col-6">
                 <textarea type="text" id="content" name="content" rows="2" class="form-control" v-model="content" 
                 placeholder="Insérer votre nom puis votre commentaire svp..."></textarea>
-                <a v-on:click="createAnswer()"><i class="far fa-paper-plane" title="Envoyer"></i></a>          
+                <a v-on:click="createPost()"><i class="far fa-paper-plane" title="Envoyer"></i></a>          
             </div>
         </div>
         <div class="row">  
@@ -30,12 +30,12 @@
             <h2>Exprimez-vous ! Partagez !</h2>
             <form id="form-signup" >
               <div class="form-group">
-                <label for="title">Titre du message :</label>
-                <input type="text" id="title" name="title" class="form-control" required v-model="inputMessage.title"/>
+                <label for="title">Titre du post :</label>
+                <input type="text" id="title" name="title" class="form-control" required v-model="inputPost.title"/>
               </div>
               <div class="form-group">
                 <label for="content">Contenu :</label>
-                <textarea type="text" id="content" name="content" rows="10" class="form-control" required v-model="inputMessage.content"></textarea>
+                <textarea type="text" id="link" name="link" rows="10" class="form-control" required v-model="inputPost.link"></textarea>
               </div>
             </form>              
              <button v-on:click="sendMessage" >Envoyer</button> 
@@ -51,20 +51,19 @@ export default {
 
     data() {
         return {
-            answer: "",
-            answers: [],
+            posts: [],
         }
     },
     methods: {
         createAnswer() {
-            let inputContent = {
-                "content": this.content,
-                "messageId": this.messageId
-            }
-            let url = "http://localhost:3000/api/answers/new"
+            let inputPost = {
+                "title": this.title,
+                "link": this.link
+            };
+            let url = "http://localhost:3000/api/post/" + '${posts.id}';
             let options = {
                 method: "POST",
-                body: JSON.stringify(inputContent),
+                body: JSON.stringify(inputPost),
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem("token"),
                     'Content-Type': 'application/json'
@@ -75,9 +74,9 @@ export default {
                 .then((res) => {
                     console.log(res)
                     if (res.ok) {
-                        this.content = {}
+                        this.title = {}
                     } else {
-                        alert("Commentaire envoyé 🖅");
+                        alert("Post envoyé");
                     }
                 })
                 .then(window.location.reload())
