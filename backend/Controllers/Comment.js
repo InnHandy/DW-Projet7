@@ -3,7 +3,11 @@ require('dotenv').config({path:'./.env'});
 
 exports.getAllComments = async (req, res, next) => {
 
-    Comment.findAll()
+    Comment.findAll({
+        order: [
+            ['id', 'asc']
+        ]
+    })
             .then((comments)=> res.status(200).json(comments))
             .catch((error)=> res.status(400).json({error}))
   };

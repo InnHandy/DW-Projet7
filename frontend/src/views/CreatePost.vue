@@ -22,7 +22,7 @@
             <div class="col-6">
                 <textarea type="text" id="content" name="content" rows="2" class="form-control" v-model="content" 
                 placeholder="Insérer votre nom puis votre commentaire svp..."></textarea>
-                <a v-on:click="createPost()"><i class="far fa-paper-plane" title="Envoyer"></i></a>          
+                <a v-on:click="createPost"><i class="far fa-paper-plane" title="Envoyer"></i></a>          
             </div>
         </div>
         <div class="row">  
@@ -37,8 +37,12 @@
                 <label for="content">Contenu :</label>
                 <textarea type="text" id="link" name="link" rows="10" class="form-control" required v-model="inputPost.link"></textarea>
               </div>
+              <div class="form-group">
+                <label for="content">Contenu :</label>
+                <textarea type="text" id="user_id" name="user_id" rows="10" class="form-control" required v-model="inputPost.user_id"></textarea>
+              </div>
             </form>              
-             <button v-on:click="sendMessage" >Envoyer</button> 
+             <button v-on:click="createPost" >Envoyer</button> 
           </div> 
         </div>
         </div>
@@ -50,17 +54,23 @@
 export default {
 
     data() {
-        return {
-            posts: [],
+        return{
+        inputPost: {
+        link: "",
+        user_id: "",
+        title: ""
+        }
         }
     },
     methods: {
-        createAnswer() {
+        createPost() {
             let inputPost = {
-                "title": this.title,
-                "link": this.link
+                "title": this.inputPost.title,
+                "link": this.inputPostlink,
+                "user_id": localStorage.getItem("userId")
             };
-            let url = "http://localhost:3000/api/post/" + '${posts.id}';
+
+            let url = 'http://localhost:3000/api/post/' + this.user_id;
             let options = {
                 method: "POST",
                 body: JSON.stringify(inputPost),

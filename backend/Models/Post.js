@@ -18,6 +18,10 @@ const Post = sequelize.define('Post', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    content: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     created_at: {
         type: DataTypes.DATE,
         allowNull: true,

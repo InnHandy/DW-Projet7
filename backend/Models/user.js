@@ -22,10 +22,12 @@ const User = sequelize.define('User', {
         allowNull: false,
         isEmail: true,
     },
-/*    isAdmin: {
+    is_Admin: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue : false,
         allowNull: false
-    }*/
+    }
 }, {
     tableName: 'users',
     timestamps: false

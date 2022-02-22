@@ -3,7 +3,11 @@ require('dotenv').config({path:'./.env'});
 
 exports.getAllPosts = async (req, res, next) => {
 
-    Post.findAll()
+    Post.findAll({
+        order: [
+            ['id', 'desc']
+        ]
+    })
             .then((posts)=> res.status(200).json(posts))
             .catch((error)=> res.status(400).json({error}))
   };

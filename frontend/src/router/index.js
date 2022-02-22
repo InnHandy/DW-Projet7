@@ -5,20 +5,14 @@ import CreateComment from '../views/CreateComment.vue'
 import CreatePost from '../views/CreatePost.vue'
 import Post from '../views/Post.vue'
 import Login from '../views/Login.vue'
-import Home from '../views/Home.vue'
 import Signup from '../views/Signup.vue'
 import ListPosts from '../views/ListPosts.vue'
 import ListComments from '../views/ListComments.vue'
 const routes = [
   {
-    path: '/login',
+    path: '/',
     name: 'Login',
     component: Login,
-  },
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
   }
   ,
   {

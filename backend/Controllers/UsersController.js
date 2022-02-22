@@ -19,7 +19,8 @@ exports.signup =  (req, res, next) => {
           const user =  User.create({
                               username : req.body.username,
                               email: req.body.email,
-                              password : hash
+                              password : hash,
+                              is_Admin: req.body.is_Admin
           });
        res.status(201).json({message : 'utilisateur créé'});
       })
@@ -43,7 +44,8 @@ exports.login = async (req, res, next) => {
                                         { userId: user.id },
                                         process.env.APP_KEY,
                                         { expiresIn: '24h' }
-                                      )
+                                      ),
+                                      is_Admin: user.is_Admin
                                     });}
                                 })
                     .catch(error => res.status(500).json({ error: 'erreur 1' }))
