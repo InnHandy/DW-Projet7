@@ -29,15 +29,12 @@
                 </div>
                 <div class="row">
                   <div class="col-2">
-                   <!-- <button type="button"
-                            :class="{ 'btn-primary': !posts_users_like.includes(post.id), 'btn-secondary': posts_users_like.includes(post.id)}"
-                            class="btn" @click="like(post.id)">Like</button> -->
-                    <button v-if="!post.posts_users_like.includes(post.id)"  type="button" class="btn btn-primary" @click="liker(post.id)">{{ posts_nb_like }} Like</button>
+                    <button v-if="!JSON.parse(post.posts_users_like).includes(post.id)"  type="button" class="btn btn-primary" @click="liker(post.id)">{{ post.posts_nb_like }} Like</button>
                     <button v-else  type="button" class="btn btn-primary" @click="unliker(post.id)">{{ posts_nb_like }} Unlike</button>
                   </div>
                   <div class="col-2">
-                      <button type="button" :disabled="post.posts_users_dislike.includes(post.id)" v-if="!post.posts_users_dislike.includes(post.id)" class="btn btn-warning" @click="disliker(post.id)"> {{ posts_nb_dislike }}Dislike</button>
-                      <button v-else  type="button" class="btn btn-primary" @click="undisliker(post.id)">{{ posts_nb_dislike }} Unlike</button>
+                      <button type="button" :disabled="post.posts_users_dislike.includes(post.id)" v-if="!post.posts_users_dislike.includes(post.id)" class="btn btn-warning" @click="disliker(post.id)"> {{ post.posts_nb_dislike }} Dislike</button>
+                      <button v-else  type="button" class="btn btn-primary" @click="undisliker(post.id)">{{ post.posts_nb_dislike }} Unlike</button>
                   </div>
                 </div>
                 <br>
@@ -94,38 +91,56 @@ export default {
     liker(id) {
 
       console.log('like post ' + id);
-      this.posts_users_like.push(id);
+      //this.posts_users_like.push(id);
       let options = {
-            method: "GET",
+            method: "POST",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem("token"),
+            },
+            body: {
+              like:1,
+              user_id: localStorage.getItem('userId')
             }
         };
-      fetch('http://localhost:3000/api/posts/'+ id, options)
-      .then(response => response.json() )
-      .then(data => {
-        data.posts_nb_like +=1;
-        const requestOptions = {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json',
-                       'Authorization': 'Bearer ' + localStorage.getItem("token") },
-            body: JSON.stringify(data)
-        };
-        fetch('http://localhost:3000/api/posts/' + id, requestOptions)
-            .then(response => response.json())
-            .then(newdata => console.log(newdata))
-      });
-      console.log(this.posts_nb_like);
+      fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
+
+      this.getAllPosts()
+
     },
     disliker(id) {
-      console.log('dislike post ' + id);
-      this.posts_users_dislike.push(id);
+      console.log('like post ' + id);
+      //this.posts_users_like.push(id);
+      let options = {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        },
+        body: {
+          like:-1,
+          user_id: localStorage.getItem('userId')
+        }
+      };
+      fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
+
+      this.getAllPosts()
     },
     unliker(id) {
 
-      console.log('unlike post ' + id);
-      this.posts_users_like.splice(this.posts_users_like.indexOf(id, 1));
-      this.posts_nb_like-=1
+      console.log('like post ' + id);
+      //this.posts_users_like.push(id);
+      let options = {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        },
+        body: {
+          like:0,
+          user_id: localStorage.getItem('userId')
+        }
+      };
+      fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
+
+      this.getAllPosts()
     },
     undisliker(id) {
 
