@@ -18,30 +18,34 @@
           </div>
           <div class="col-1">
               
-                <button class="btn btn-success" type="button" @click="retour">Retour</button>
+                <button class="btn btn-success" type="button" @click="retour()">Retour</button>
               
           </div>
       </div>
 
 <div class="row">    
           <div class="col-6">
-              <h1>List des posts</h1>
-          <div v-for="post in posts" v-bind:key="post">
+              <h1>List des comments</h1>
+          <div v-for="comment in comments" v-bind:key="comment">
               <div class="row">
                   <div class="col-12">
-                    <h4>Post num {{ post.id }} <button type="button" class="btn btn-info">Voir +</button></h4>
-                    <p>{{ post.title }}</p>
+                    <h4>Comment num {{ comment.comment_id }} <button type="button" class="btn btn-info">Voir +</button></h4>
+                    <p>{{ comment.title }}</p>
                   </div>
               </div>
               <div class="row">
                   <div class="col-1">
                     <button type="button"
-                            :class="{ 'btn-primary': !posts_users_like.includes(post.id), 'btn-secondary': posts_users_like.includes(post.id)}"
-                            class="btn" @click="like(post.id)">Like</button>
+                            :class="{ 'btn-primary': !comments_users_like.includes(comment.comment_id), 'btn-secondary': comments_users_like.includes(comment.comment_id)}"
+                            class="btn" @click="liker(comment.comment_id)">{{ comment.comments_nb_like }}Like</button>
                   </div>
                   <div class="col-1">
-                      <button type="button" :disabled="posts_users_disLike.includes(post.id)" class="btn btn-warning" @click="dislike(post.id)">Dislike</button>
+                      <button type="button" :disabled="comments_users_disLike.includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)">Dislike</button>
                   </div>
+                  <div class="col-2">
+                  <button v-if="adminDelete()" 
+                  type="button" @click="deletePost(comment.comment_id)" >Supprimez </button>
+                  </div> 
               </div>
               <br>
           </div>

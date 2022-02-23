@@ -28,16 +28,16 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-2">
-                    <button v-if="!JSON.parse(post.posts_users_like).includes(post.id)"  type="button" class="btn btn-primary" @click="liker(post.id)">{{ post.posts_nb_like }} Like</button>
-                    <button v-else  type="button" class="btn btn-primary" @click="unliker(post.id)">{{ post.posts_nb_like }} Unlike</button>
+                  <div class="col-1">
+                    <button type="button"
+                            :class="{ 'btn-primary': !comments_users_like.includes(comment.comment_id), 'btn-secondary': comments_users_like.includes(comment.comment_id)}"
+                            class="btn" @click="liker(comment.comment_id)">{{ comment.comments_nb_like }}Like</button>
+                  </div>
+                  <div class="col-1">
+                      <button type="button" :disabled="comments_users_disLike.includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)">Dislike</button>
                   </div>
                   <div class="col-2">
-                      <button type="button" :disabled="post.posts_users_dislike.includes(post.id)" v-if="!post.posts_users_dislike.includes(post.id)" class="btn btn-warning" @click="disliker(post.id)"> {{ post.posts_nb_dislike }} Dislike</button>
-                      <button v-else  type="button" class="btn btn-primary" @click="undisliker(post.id)">{{ post.posts_nb_dislike }} Unlike</button>
-                  </div>
-                  <div class="col-2">
-                  <button v-if="post.is_Admin == true" 
+                  <button v-if="adminDelete()" 
                   type="button" @click="deletePost(post.id)" >Supprimez </button>
                   </div> 
                 </div>
@@ -73,6 +73,11 @@ export default {
 
   },
   methods : {
+    adminDelete(){
+      if (this.is_Admin == true){return true}
+      else {return false}
+    },
+    
     deconnect(){
      localStorage.clear();
      this.$router.push('/') 
@@ -88,7 +93,7 @@ export default {
       fetch('http://localhost:3000/api/posts/'+ this.id, options)
       .then(response => response.json() )
       .then(data => {
-        this.posts = data;
+        this.posts = Object.values(data);
         console.log(this.posts)
       })
     },
@@ -134,17 +139,16 @@ export default {
                 'Authorization': 'Bearer ' + localStorage.getItem("token"),
             },
             body: {
-              like:1,
               user_id: localStorage.getItem('userId')
             }
         };
       fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
 
-      this.getAllPosts()
+      this.getOnePost()
 
     },
     disliker(id) {
-      console.log('like post ' + id);
+      console.log('dislike post ' + id);
       //this.posts_users_like.push(id);
       let options = {
         method: "POST",
@@ -152,42 +156,16 @@ export default {
           'Authorization': 'Bearer ' + localStorage.getItem("token"),
         },
         body: {
-          like:-1,
           user_id: localStorage.getItem('userId')
         }
       };
-      fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
+      fetch('http://localhost:3000/api/posts/'+ id + '/dislike', options)
 
-      this.getAllPosts()
-    },
-    unliker(id) {
-
-      console.log('like post ' + id);
-      //this.posts_users_like.push(id);
-      let options = {
-        method: "POST",
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem("token"),
-        },
-        body: {
-          like:0,
-          user_id: localStorage.getItem('userId')
-        }
-      };
-      fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
-
-      this.getAllPosts()
-    },
-    undisliker(id) {
-
-      console.log('unlike post ' + id)
-      this.posts_users_dislike.splice(this.posts_users_dislike.indexOf(id, 1))
-      //rafraichir la liste des posts en relançant la requete ou mettre à jour le tableau de post local
+      this.getOnePost()
     }
   },
   mounted() {
     this.getOnePost();
-    this.createPost();
   },
 }
 </script>

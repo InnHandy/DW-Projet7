@@ -66,12 +66,9 @@ export default {
        posts_nb_like: 0,
        posts_nb_dislike: 0,
        like:0,
-
-
-    }
+     }
   },
   components: {
-
   },
   methods : {
     deconnect(){
@@ -79,23 +76,18 @@ export default {
      this.$router.push('/') 
     },
     goToPost(id) {
-      this.$router.push('/listposts/'+ id )
-    },
-    createPost() {
-      this.$router.push('/createpost/')
+      this.$router.push('/listposts/'+ id );
     },
 
     getAllPosts() {
       fetch('http://localhost:3000/api/posts/')
       .then(response => response.json() )
       .then(data => {
-        this.posts = data
+        this.posts = data;
+        console.log(this.posts)
       })
     },
     liker(id) {
-
-      console.log('like post ' + id);
-      //this.posts_users_like.push(id);
       let options = {
             method: "POST",
             headers: {
@@ -103,70 +95,36 @@ export default {
                 'Authorization': 'Bearer ' + localStorage.getItem("token"),
             },
             body: {
-              like:1,
               user_id: localStorage.getItem('userId')
             }
         };
       fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
       .then(response => response.json() )
       .then(data => {
-        console.log(data)
-      })
-      ;
+        console.log(data)});
       this.getAllPosts()
-
     },
     disliker(id) {
-      console.log('like post ' + id);
-      //this.posts_users_like.push(id);
       let options = {
         method: "POST",
         headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem("token"),
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem("token")
         },
         body: {
-          like:-1,
           user_id: localStorage.getItem('userId')
         }
       };
       fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
-
+      .then(response => response.json() )
+      .then(data => {
+        console.log(data)});
       this.getAllPosts()
-    },
-    unliker(id) {
-
-      console.log('like post ' + id);
-      //this.posts_users_like.push(id);
-      let options = {
-        method: "POST",
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem("token"),
-        },
-        body: {
-          like:0,
-          user_id: localStorage.getItem('userId')
-        }
-      };
-      fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
-
-      this.getAllPosts()
-    },
-    undisliker(id) {
-
-      console.log('unlike post ' + id)
-      this.posts_users_dislike.splice(this.posts_users_dislike.indexOf(id, 1))
-      //rafraichir la liste des posts en relançant la requete ou mettre à jour le tableau de post local
-    }
-  },
+    }},
   mounted() {
     this.getAllPosts();
-  }
-  }
-
-  
-    
+  }}  
 </script>
 
 <style>
-
 </style>

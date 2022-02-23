@@ -41,7 +41,7 @@
                     <button v-else  type="button" class="btn btn-primary" @click="unliker(post.id)">{{ post.posts_nb_like }} Unlike</button>
                   </div>
                   <div class="col-2">
-                      <button type="button" :disabled="comment.comments_users_dislike.includes(comment.comment_id)" v-if="!comment.comments_users_dislike.includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)"> {{ comment.comments_nb_dislike }} Dislike</button>
+                      <button type="button" :disabled="JSON.parse(comment.comments_users_dislike).includes(comment.comment_id)" v-if="!JSON.parse(comment.comments_users_dislike).includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)"> {{ comment.comments_nb_dislike }} Dislike</button>
                       <button v-else  type="button" class="btn btn-primary" @click="undisliker(post.id)">{{ post.posts_nb_dislike }} Unlike</button>
                   </div>
                 </div>
@@ -58,13 +58,7 @@ export default {
   data() {
     return {
        comments: [],
-       comments_users_like: [],
-       comments_users_disLike: [],
-       like:0,
        postID: localStorage.getItem("postId")
-       //;
-
-
     }
   },
   components: {
@@ -105,7 +99,9 @@ export default {
             }
         };
       fetch('http://localhost:3000/api/posts/:id/comments/'+ id + '/like', options)
-
+      .then(response => response.json() )
+      .then(data => {
+        console.log(data)});
       this.getAllComments()
 
     },
@@ -117,47 +113,13 @@ export default {
           'Authorization': 'Bearer ' + localStorage.getItem("token"),
         },
         body: {
-          like:-1,
           user_id: localStorage.getItem('userId')
         }
       };
       fetch('http://localhost:3000/api/posts/:id/comments/'+ id + '/like', options)
-
-      this.getAllComments()
-    },
-    unliker(id) {
-
-      console.log('unlike comment ' + id);
-      //this.posts_users_like.push(id);
-      let options = {
-        method: "POST",
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem("token"),
-        },
-        body: {
-          like:0,
-          user_id: localStorage.getItem('userId')
-        }
-      };
-      fetch('http://localhost:3000/api/posts/:id/comments/'+ id + '/like', options)
-
-      this.getAllComments()
-    },
-    undisliker(id) {
-
-      console.log('undislike comment ' + id)
-      let options = {
-        method: "POST",
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem("token"),
-        },
-        body: {
-          like:0,
-          user_id: localStorage.getItem('userId')
-        }
-      };
-      fetch('http://localhost:3000/api/posts/:id/comments/'+ id + '/like', options)
-
+      .then(response => response.json() )
+      .then(data => {
+        console.log(data)});
       this.getAllComments()
     }
   },
