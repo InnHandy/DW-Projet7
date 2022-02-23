@@ -28,9 +28,10 @@
               <div v-for="post in posts" v-bind:key="post">
                 <div class="row">
                   <div class="col-12">
-                    <h4>Post num {{ post.id }} <button type="button" class=" btn-info" @click="goToPost(post.id)">Voir +</button></h4>
+                    <h4>Post num {{ post.id }} </h4>
                     <p><a href="{{ post.link }}">{{ post.link }}</a> </p>
                     <p>{{ post.content }}</p>
+                   <p>  <button type="button" class=" btn-info" @click="goToPost(post.id)">Voir le Post</button></p>
                   </div>
                 </div>
                 <div class="row">
@@ -64,7 +65,7 @@ export default {
        user_id: 0,
        posts_nb_like: 0,
        posts_nb_dislike: 0,
-       like:0
+       like:0,
 
 
     }

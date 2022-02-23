@@ -24,8 +24,9 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.getOnePost = async (req, res, next) => {
-    const post = await Post.findOne({ where: { id: req.params.id } });//({ where: { user_id: 1 } });
-    return res.status(201).json({ post}); 
+    Post.findOne({ where: { id: req.params.id } })//({ where: { user_id: 1 } });
+    .then( (post) => res.status(201).json({ post}) )
+    .catch((error)=> res.status(400).json({error}))
   };
      
 exports.likePost = async (req, res, next) => {
