@@ -44,12 +44,12 @@ const Post = sequelize.define('Post', {
     posts_users_like: {
         type: DataTypes.TEXT,
         allowNull: true,
-        defaultValue : [],
+        defaultValue : '[]',
     },
     posts_users_dislike: {
         type: DataTypes.TEXT,
         allowNull: true,
-        defaultValue : [],
+        defaultValue : '[]',
     },
 
 }, {

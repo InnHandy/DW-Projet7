@@ -1,15 +1,17 @@
 <template>
-     <div class="container">
-      <div class="row">
+<div class="container" >
+    <div class="row">
           <div class="col-8">
+              <header>
+              <router-link  to="/listposts">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
+             </router-link>               
+             </header>
           </div>
-          <div class="col-1">
-              <router-link to="/login">
-                <button class="btn btn-success" type="button">logout</button>
-              </router-link>
+          <div class="col-2 pt-4">
+            <button class="btn btn-warning mb-2" type="button" @click="deconnect()">Logout</button>
           </div>
           <div class="col-1">
               <router-link to="/account">
@@ -17,13 +19,12 @@
               </router-link>
           </div>
           <div class="col-1">
-              <router-link to="/comment">
-                <button class="btn btn-success" type="button">Comment</button>
-              </router-link>
+              
+                <button class="btn btn-success" type="button" @click="retour">Retour</button>
+              
           </div>
-      </div>
-  
-<div class="row">    
+    </div>
+    <div class="row">    
           <div class="col-6">
               <h1>List des comments</h1>
           
@@ -34,22 +35,21 @@
                     <p>{{ comment.title }}</p>
                   </div>
               </div>
-              <div class="row">
-                  <div class="col-1">
-                    <button type="button"
-                            :class="{ 'btn-primary': !comments_users_like.includes(comments.comment_id), 'btn-secondary': comments_users_like.includes(comments.comment_id)}"
-                            class="btn" @click="like(comments.comment_id)">Like</button>
+                <div class="row">
+                  <div class="col-2">
+                    <button v-if="!JSON.parse(comment.comments_users_like).includes(comment.comment_id)"  type="button" class="btn btn-primary" @click="liker(comment.comment_id)">{{ comment.comments_nb_like }} Like</button>
+                    <button v-else  type="button" class="btn btn-primary" @click="unliker(post.id)">{{ post.posts_nb_like }} Unlike</button>
                   </div>
-                  <div class="col-1">
-                      <button type="button" :disabled="comments_users_disLike.includes(comments.comment_id)" class="btn btn-warning" @click="dislike(comments.comment_id)">Dislike</button>
+                  <div class="col-2">
+                      <button type="button" :disabled="comment.comments_users_dislike.includes(comment.comment_id)" v-if="!comment.comments_users_dislike.includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)"> {{ comment.comments_nb_dislike }} Dislike</button>
+                      <button v-else  type="button" class="btn btn-primary" @click="undisliker(post.id)">{{ post.posts_nb_dislike }} Unlike</button>
                   </div>
+                </div>
+                <br>
               </div>
-              <br>
-          </div>
-          </div>
-          </div>
-          </div>
-     
+           </div>
+    </div>
+</div>
 </template>
 
 <script>
@@ -60,33 +60,111 @@ export default {
        comments: [],
        comments_users_like: [],
        comments_users_disLike: [],
+       like:0,
+       postID: localStorage.getItem("postId")
+       //;
+
+
     }
   },
   components: {
 
   },
   methods : {
+    deconnect(){
+     localStorage.clear();
+     this.$router.push('/') 
+    },
+    retour(){
+      this.$router.go(-1);
+      localStorage.removeItem("postId")
+    },
     getAllComments() {
-      fetch('http://localhost:3000/api/posts/')
+      fetch('http://localhost:3000/api/posts/:id/' + this.postID + '/comments/')
       .then(response => response.json() )
       .then(data => {
         this.comments = data
       })
     },
-    like(comment_id) {
+    goToComment(id) {
+      this.$router.push('/listcomments/'+ id )
+    },
+    createComment() {
+      this.$router.push('/createcomment/')
+    },
+    liker(id) {
+      console.log('like comment ' + id);
+      let options = {
+            method: "POST",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token"),
+            },
+            body: {
+              like:1,
+              user_id: localStorage.getItem('userId')
+            }
+        };
+      fetch('http://localhost:3000/api/posts/:id/comments/'+ id + '/like', options)
 
-      console.log('like comment ' + comment_id)
-      this.comments_users_like.push(comment_id)
+      this.getAllComments()
+
     },
-    dislike(comment_id) {
-      console.log('dislike comment ' + comment_id)
-      this.comments_users_disLike.push(comment_id)
+    disliker(id) {
+      console.log('dislike comment ' + id);
+      let options = {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        },
+        body: {
+          like:-1,
+          user_id: localStorage.getItem('userId')
+        }
+      };
+      fetch('http://localhost:3000/api/posts/:id/comments/'+ id + '/like', options)
+
+      this.getAllComments()
     },
+    unliker(id) {
+
+      console.log('unlike comment ' + id);
+      //this.posts_users_like.push(id);
+      let options = {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        },
+        body: {
+          like:0,
+          user_id: localStorage.getItem('userId')
+        }
+      };
+      fetch('http://localhost:3000/api/posts/:id/comments/'+ id + '/like', options)
+
+      this.getAllComments()
+    },
+    undisliker(id) {
+
+      console.log('undislike comment ' + id)
+      let options = {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        },
+        body: {
+          like:0,
+          user_id: localStorage.getItem('userId')
+        }
+      };
+      fetch('http://localhost:3000/api/posts/:id/comments/'+ id + '/like', options)
+
+      this.getAllComments()
+    }
   },
   mounted() {
-    this.getAllComments();
+    this.getAllPosts();
   }
-}
+  }   
 </script>
 
 <style>

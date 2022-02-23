@@ -1,19 +1,24 @@
 <template>
 <div class="container" >
     <div class="row">
-          <div class="col-8">
+          <div class="col-6">
+              <router-link  to="/listposts">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
-          </div>
-          <div class="col-2 pt-4">
-              <router-link  to="/signup">
-                <button class="btn btn-warning mb-2" type="button">signup</button>
               </router-link>
           </div>
           <div class="col-2 pt-4">
-              <router-link  to="/">
-                <button class="btn btn-success" type="button">login</button>
+            <button class="btn btn-danger mb-2" type="button" @click="deconnect()">Logout</button>
+          </div>
+          <div class="col-2 pt-4">
+              <router-link  to="/account">
+                <button class="btn btn-warning" type="button">Account</button>
+              </router-link>
+          </div>
+          <div class="col-1 pt-4">
+              <router-link  to="/createpost">
+                <button class="btn btn-success" type="button">Poster</button>
               </router-link>
           </div>
     </div>
@@ -23,17 +28,18 @@
               <div v-for="post in posts" v-bind:key="post">
                 <div class="row">
                   <div class="col-12">
-                    <h4>Post num {{ post.id }} <button type="button" class="btn btn-info" @click="goToPost(post.id)">Voir +</button></h4>
+                    <h4>Post num {{ post.id }} <button type="button" class=" btn-info" @click="goToPost(post.id)">Voir +</button></h4>
                     <p><a href="{{ post.link }}">{{ post.link }}</a> </p>
+                    <p>{{ post.content }}</p>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-2">
                     <button v-if="!JSON.parse(post.posts_users_like).includes(post.id)"  type="button" class="btn btn-primary" @click="liker(post.id)">{{ post.posts_nb_like }} Like</button>
-                    <button v-else  type="button" class="btn btn-primary" @click="unliker(post.id)">{{ posts_nb_like }} Unlike</button>
+                    <button v-else  type="button" class="btn btn-primary" @click="unliker(post.id)">{{ post.posts_nb_like }} Unlike</button>
                   </div>
                   <div class="col-2">
-                      <button type="button" :disabled="post.posts_users_dislike.includes(post.id)" v-if="!post.posts_users_dislike.includes(post.id)" class="btn btn-warning" @click="disliker(post.id)"> {{ post.posts_nb_dislike }} Dislike</button>
+                      <button type="button" :disabled="JSON.parse(post.posts_users_dislike).includes(post.id)" v-if="!JSON.parse(post.posts_users_dislike).includes(post.id)" class="btn btn-warning" @click="disliker(post.id)"> {{ post.posts_nb_dislike }} Dislike</button>
                       <button v-else  type="button" class="btn btn-primary" @click="undisliker(post.id)">{{ post.posts_nb_dislike }} Unlike</button>
                   </div>
                 </div>
@@ -67,6 +73,10 @@ export default {
 
   },
   methods : {
+    deconnect(){
+     localStorage.clear();
+     this.$router.push('/') 
+    },
     goToPost(id) {
       this.$router.push('/listposts/'+ id )
     },
@@ -81,13 +91,6 @@ export default {
         this.posts = data
       })
     },
-    getNbLikes(id){
-      fetch('http://localhost:3000/api/posts/'+ id)
-      .then(response => response.json() )
-      .then(data => {
-        this.posts = data
-      })
-    },
     liker(id) {
 
       console.log('like post ' + id);
@@ -95,6 +98,7 @@ export default {
       let options = {
             method: "POST",
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem("token"),
             },
             body: {
@@ -103,7 +107,11 @@ export default {
             }
         };
       fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
-
+      .then(response => response.json() )
+      .then(data => {
+        console.log(data)
+      })
+      ;
       this.getAllPosts()
 
     },

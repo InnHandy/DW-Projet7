@@ -29,7 +29,8 @@
                     <label for="password">Mot de passe :</label>
                     <input type="password" id="password" name="password" class="form-control" required v-model="inputLogin.password"/>
                 </div>   
-                <button type="submit" class="btn btn-primary">Connect</button>                                     
+                <br>
+                <button type="submit" class="btn btn-primary">Login</button>                                     
               </form>      
               <div class="col-6"><p>Pas encore inscrit ? <router-link to="/signup">Rejoignez-nous !</router-link></p></div>
             </div>

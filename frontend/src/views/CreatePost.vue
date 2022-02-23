@@ -1,102 +1,94 @@
 <template>
-        <div class="container">
-         <div class="row">
-          <div class="col-8">
+    <div class="container" >
+        <div class="row">
+            <div class="col-8">
+              <router-link  to="/listposts">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
+             </router-link>             
+             </div>
+            <div class="col-2 pt-4">
+            <button class="btn btn-warning mb-2" type="button" @click="deconnect()">Logout</button>
           </div>
-          <div class="col-1">
-              <router-link to="/signup">
-                <button class="btn btn-warning mb-2" type="button">logout</button>
-              </router-link>
-          </div>
-          <div class="col-1">
-              <router-link to="/login">
-                <button class="btn btn-success" type="button">Retour</button>
-              </router-link>
-          </div>
-      </div>
-        <div class= "row">    
-            
-            <div class="col-6">
-                <textarea type="text" id="content" name="content" rows="2" class="form-control" v-model="content" 
-                placeholder="Insérer votre nom puis votre commentaire svp..."></textarea>
-                <a v-on:click="createPost"><i class="far fa-paper-plane" title="Envoyer"></i></a>          
+            <div class="col-2 pt-4">
+                <router-link  to="/"><button class="btn btn-success" type="button">Retour</button></router-link>
             </div>
         </div>
-        <div class="row">  
-        <div class="col-6">          
-            <h2>Exprimez-vous ! Partagez !</h2>
-            <form id="form-signup" >
-              <div class="form-group">
+        <div class="row">
+            <div class="col-6">         
+                <h2>Pour rejoindre la communauté, merci de remplir ce formulaire</h2>
+                <form v-on:submit.prevent="createpost" id="form-signup" >
+                    <div class="form-group">
                 <label for="title">Titre du post :</label>
                 <input type="text" id="title" name="title" class="form-control" required v-model="inputPost.title"/>
               </div>
               <div class="form-group">
                 <label for="content">Contenu :</label>
-                <textarea type="text" id="link" name="link" rows="10" class="form-control" required v-model="inputPost.link"></textarea>
+                <textarea type="text" id="content" name="content" rows="10" class="form-control" required v-model="inputPost.content"></textarea>
               </div>
               <div class="form-group">
-                <label for="content">Contenu :</label>
-                <textarea type="text" id="user_id" name="user_id" rows="10" class="form-control" required v-model="inputPost.user_id"></textarea>
+                <label for="content">Link :</label>
+                <textarea type="text" id="link" name="link" rows="2" class="form-control" required v-model="inputPost.link"></textarea>
               </div>
-            </form>              
-             <button v-on:click="createPost" >Envoyer</button> 
-          </div> 
+                    <br>
+                    <button class=" btn-success">Poster</button>                                       
+                </form> 
+            </div>   
+            <div class="col-1"><p>Vous avez déjà un compte ? <router-link to="/">Connectez-vous</router-link></p></div> 
         </div>
-        </div>
+    </div> 
 </template>
 
 
-<script >
+<script>
 
 export default {
-
+    name: 'CreatePost',
     data() {
-        return{
-        inputPost: {
+        return {
+            inputPost: {
         link: "",
         user_id: "",
-        title: ""
+        title: "",
+        content: ""
         }
         }
     },
     methods: {
-        createPost() {
-            let inputPost = {
+        deconnect(){
+     localStorage.clear();
+     this.$router.push('/') 
+    },
+        createpost() {
+            let inputDatas = {
                 "title": this.inputPost.title,
-                "link": this.inputPostlink,
-                "user_id": localStorage.getItem("userId")
-            };
-
-            let url = 'http://localhost:3000/api/post/' + this.user_id;
+                "link": this.inputPost.link,
+                "user_id": localStorage.getItem("userId"),
+                "content": this.inputPost.content
+            }
+            console.log(inputDatas)
+            let url = 'http://localhost:3000/api/posts'
             let options = {
                 method: "POST",
-                body: JSON.stringify(inputPost),
+                body: JSON.stringify(inputDatas),
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem("token"),
-                    'Content-Type': 'application/json'
                 }
             }
+            console.log(options)
             fetch(url, options)
                 .then(res => res.json())
                 .then((res) => {
-                    console.log(res)
-                    if (res.ok) {
-                        this.title = {}
-                    } else {
-                        alert("Post envoyé");
-                    }
+                    console.log(res);
+                    this.$router.push("/listposts");
                 })
-                .then(window.location.reload())
                 .catch(error => console.log(error))
         }
-    },
+    }
 }
 </script>
 
-<style >
-
+<style>
 </style>
-

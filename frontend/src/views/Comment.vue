@@ -2,14 +2,14 @@
     <div class="container">
       <div class="row">
           <div class="col-8">
+              <router-link  to="/listposts">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
+             </router-link> 
           </div>
-          <div class="col-1">
-              <router-link to="/login">
-                <button class="btn btn-success" type="button">logout</button>
-              </router-link>
+          <div class="col-2 pt-4">
+            <button class="btn btn-warning mb-2" type="button" @click="deconnect()">Logout</button>
           </div>
           <div class="col-1">
               <router-link to="/account">
@@ -17,9 +17,9 @@
               </router-link>
           </div>
           <div class="col-1">
-              <router-link to="/createPost">
-                <button class="btn btn-success" type="button">Post</button>
-              </router-link>
+              
+                <button class="btn btn-success" type="button" @click="retour">Retour</button>
+              
           </div>
       </div>
 
@@ -72,6 +72,13 @@ export default {
 
   },
   methods : {
+    deconnect(){
+     localStorage.clear();
+     this.$router.push('/') 
+    },
+    retour(){
+      this.$router.go(-1);
+    },
     getOneComment() {
       let url = 'http://localhost:3000/api/posts/' + this.post_id + '/comments/' + this.comment_id;
       let options = {
