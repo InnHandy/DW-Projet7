@@ -1,33 +1,36 @@
 <template>
 <div class="container" >
     <div class="row">
-          <div class="col-6">
+          <div class="col-md-4">
               <router-link  to="/listposts">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
               </router-link>
           </div>
-          <div class="col-2 pt-4">
+          <div class="col-md-2 pt-4">
             <button class="btn btn-danger mb-2" type="button" @click="deconnect()">Logout</button>
           </div>
-          <div class="col-2 pt-4">
+          <div class="col-md-2 pt-4">
               <router-link  to="/account">
                 <button class="btn btn-warning" type="button">Account</button>
               </router-link>
           </div>
-          <div class="col-1 pt-4">
+          <div class="col-md-2 pt-4">
               <router-link  to="/createpost">
                 <button class="btn btn-success" type="button">Poster</button>
               </router-link>
           </div>
     </div>
+    <br>
+        <br>
+        <br>
     <div class="row">    
-          <div class="col-6">
+          <div class="col-md-12">
               <h1>List des posts</h1>
               <div v-for="post in posts" v-bind:key="post">
                 <div class="row">
-                  <div class="col-12">
+                  <div class="col-md-12">
                     <h4>Post num {{ post.id }} </h4>
                     <p><a href="{{ post.link }}">{{ post.link }}</a> </p>
                     <p>{{ post.content }}</p>
@@ -35,13 +38,13 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-2">
-                    <button v-if="!JSON.parse(post.posts_users_like).includes(post.id)"  type="button" class="btn btn-primary" @click="liker(post.id)">{{ post.posts_nb_like }} Like</button>
-                    <button v-else  type="button" class="btn btn-primary" @click="unliker(post.id)">{{ post.posts_nb_like }} Unlike</button>
+                  <div class="col-md-6">
+                    <button type="button"
+                            :class="{ 'btn-primary': !JSON.parse(post.posts_users_like).includes(post.id), 'btn-secondary': JSON.parse(post.posts_users_like).includes(post.id)}"
+                            class="btn" @click="liker(post.id)" :disabled="JSON.parse(post.posts_users_dislike).includes(post.id)">{{ post.posts_nb_like }}Like</button>
                   </div>
-                  <div class="col-2">
-                      <button type="button" :disabled="JSON.parse(post.posts_users_dislike).includes(post.id)" v-if="!JSON.parse(post.posts_users_dislike).includes(post.id)" class="btn btn-warning" @click="disliker(post.id)"> {{ post.posts_nb_dislike }} Dislike</button>
-                      <button v-else  type="button" class="btn btn-primary" @click="undisliker(post.id)">{{ post.posts_nb_dislike }} Unlike</button>
+                  <div class="col-md-6">
+                      <button type="button" :disabled="JSON.parse(post.posts_users_like).includes(post.id)" class="btn btn-warning" @click="disliker(post.id)">{{ post.posts_nb_like }}Dislike</button>
                   </div>
                 </div>
                 <br>
@@ -57,15 +60,6 @@ export default {
   data() {
     return {
        posts: [],
-       posts_users_like: [],
-       posts_users_dislike: [],
-       link: "",
-       title: "",
-       content:"",
-       user_id: 0,
-       posts_nb_like: 0,
-       posts_nb_dislike: 0,
-       like:0,
      }
   },
   components: {
@@ -80,7 +74,14 @@ export default {
     },
 
     getAllPosts() {
-      fetch('http://localhost:3000/api/posts/')
+      let options = {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("token"),
+            }
+        };
+      fetch('http://localhost:3000/api/posts/', options)
       .then(response => response.json() )
       .then(data => {
         this.posts = data;
@@ -120,7 +121,7 @@ export default {
       .then(data => {
         console.log(data)});
       this.getAllPosts()
-    }},
+    },},
   mounted() {
     this.getAllPosts();
   }}  

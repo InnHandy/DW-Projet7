@@ -46,12 +46,12 @@ const routes = [
     component: ListComments
   },
   {
-    path: '/listposts/:id/:comment_id',
+    path: '/listposts/:id/listcomments/:comment_id',
     name: 'Comment',
     component: Comment,
   },
   {
-    path: '/listposts/:id/createcomment',
+    path: '/listposts/:id/listcomments/createcomment',
     name: 'CreateComment',
     component: CreateComment,
   }

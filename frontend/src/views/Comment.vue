@@ -1,50 +1,52 @@
 <template>
     <div class="container">
       <div class="row">
-          <div class="col-8">
+          <div class="col-md-4">
               <router-link  to="/listposts">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
              </router-link> 
           </div>
-          <div class="col-2 pt-4">
+          <div class="col-md-2 pt-4">
             <button class="btn btn-warning mb-2" type="button" @click="deconnect()">Logout</button>
           </div>
-          <div class="col-1">
+          <div class="col-md-2 pt-4">
               <router-link to="/account">
                 <button class="btn btn-success" type="button">mon compte</button>
               </router-link>
           </div>
-          <div class="col-1">
+          <div class="col-md-2 pt-4">
               
                 <button class="btn btn-success" type="button" @click="retour()">Retour</button>
               
           </div>
       </div>
-
+<br>
+        <br>
+        <br>
 <div class="row">    
-          <div class="col-6">
+          <div class="col-md-12">
               <h1>List des comments</h1>
           <div v-for="comment in comments" v-bind:key="comment">
               <div class="row">
-                  <div class="col-12">
+                  <div class="col-md-12">
                     <h4>Comment num {{ comment.comment_id }} <button type="button" class="btn btn-info">Voir +</button></h4>
                     <p>{{ comment.title }}</p>
                   </div>
               </div>
               <div class="row">
-                  <div class="col-1">
+                  <div class="col-md-4">
                     <button type="button"
-                            :class="{ 'btn-primary': !comments_users_like.includes(comment.comment_id), 'btn-secondary': comments_users_like.includes(comment.comment_id)}"
-                            class="btn" @click="liker(comment.comment_id)">{{ comment.comments_nb_like }}Like</button>
+                            :class="{ 'btn-primary': !JSON.parse(comment.comments_users_like).includes(comment.comment_id), 'btn-secondary': JSON.parse(comment.comments_users_like).includes(comment.comment_id)}"
+                            class="btn" @click="liker(comment.comment_id)" :disabled="comments_users_like.includes(comment.comment_id)">{{ comment.comments_nb_like }}Like</button>
                   </div>
-                  <div class="col-1">
-                      <button type="button" :disabled="comments_users_disLike.includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)">Dislike</button>
+                  <div class="col-md-4">
+                      <button type="button" :disabled="JSON.parse(comment.comments_users_dislike).includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)">Dislike</button>
                   </div>
-                  <div class="col-2">
+                  <div class="col-md-4">
                   <button v-if="adminDelete()" 
-                  type="button" @click="deletePost(comment.comment_id)" >Supprimez </button>
+                  type="button" @click="deleteComment(comment.comment_id)" >Supprimez </button>
                   </div> 
               </div>
               <br>
@@ -61,14 +63,9 @@ export default {
   data() {
     return {
        comments: [],
-       comments_users_like: [],
-       comments_users_disLike: [],
-       texte : "",
-       comment_id : window.location.href.split('/')[5],
-       post_id : window.location.href.split('/')[7],
+       comment_id : window.location.href.split('/')[7],
+       post_id : window.location.href.split('/')[5],
        user_id: localStorage.getItem("userId"),
-       comments_nb_like: 0,
-       comments_nb_dislike: 0,
        is_Admin: localStorage.getItem("is_Admin"),
     }
   },
@@ -76,6 +73,11 @@ export default {
 
   },
   methods : {
+    adminDelete(){
+      if (this.is_Admin == true){return true;}
+      else {return false;}
+    },
+    
     deconnect(){
      localStorage.clear();
      this.$router.push('/') 
@@ -88,13 +90,14 @@ export default {
       let options = {
             method: "GET",
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem("token"),
             }
         };
       fetch(url, options)
       .then(response => response.json() )
       .then(data => {
-        this.comments = data
+        this.comments = Object.values(data);
       })
     },
     deleteComment(id) {
@@ -104,7 +107,8 @@ export default {
             let options = {
                 method: "DELETE",
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                    'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("token"),
                 }
             };
             fetch(url, options)
@@ -115,15 +119,43 @@ export default {
                 })
                 .catch(error => console.log(error))
         }},
-    like(id) {
+    liker(id) {
+      console.log('like comment ' + id);
+      let options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("token"),
+            },
+            body: {
+              user_id: localStorage.getItem('userId')
+            }
+        };
+      fetch('http://localhost:3000/api/posts/' + this.post_id + '/comments/'+ id + '/like', options)
+      .then(response => response.json() )
+      .then(data => {
+        console.log(data)});
+      this.getOneComment()
 
-      console.log('like comment ' + id)
-      this.comments_users_like.push(id)
     },
-    dislike(id) {
-      console.log('dislike comment ' + id)
-      this.comments_users_disLike.push(id)
-    },
+    disliker(id) {
+      console.log('dislike comment ' + id);
+      let options = {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        },
+        body: {
+          user_id: localStorage.getItem('userId')
+        }
+      };
+      fetch('http://localhost:3000/api/posts/' + this.post_id + '/comments/'+ id + '/dislike', options)
+      .then(response => response.json() )
+      .then(data => {
+        console.log(data)});
+      this.getOneComment()
+    }
   },
   mounted() {
     this.getOneComment();

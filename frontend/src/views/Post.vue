@@ -1,43 +1,51 @@
 <template>
 <div class="container" >
     <div class="row">
-          <div class="col-8">
+          <div class="col-md-4">
               <router-link  to="/listposts">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
              </router-link>  
           </div>
-          <div class="col-2 pt-4">
+          <div class="col-md-2 pt-4">
             <button class="btn btn-warning mb-2" type="button" @click="deconnect()">Logout</button>
           </div>
-          <div class="col-2 pt-4">
+          <div class="col-md-2 pt-4">
               <router-link  to="/listposts">
                 <button class="btn btn-success" type="button">Retour</button>
               </router-link>
           </div>
+          <div class="col-md-2 pt-4">
+              <router-link  to="/createpost">
+                <button class="btn btn-success" type="button">Poster</button>
+              </router-link>
+          </div>
     </div>
+    <br>
+        <br>
+        <br>
     <div class="row">    
-          <div class="col-6">
+          <div class="col-md-12">
               <h1>Post</h1>
               <div v-for="post in posts" v-bind:key="post">
                 <div class="row">
-                  <div class="col-12">
+                  <div class="col-md-12">
                     <h4>Post num {{ post.id }} <button type="button" class="btn btn-info" @click="goToComments(post.id)">Voir Commentaires</button></h4>
                     <p><a href="{{ post.link }}">{{ post.link }}</a> </p>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-1">
+                  <div class="col-md-4">
                     <button type="button"
-                            :class="{ 'btn-primary': !comments_users_like.includes(comment.comment_id), 'btn-secondary': comments_users_like.includes(comment.comment_id)}"
-                            class="btn" @click="liker(comment.comment_id)">{{ comment.comments_nb_like }}Like</button>
+                            :class="{ 'btn-primary': !JSON.parse(post.posts_users_like).includes(post.id), 'btn-secondary': JSON.parse(post.posts_users_like).includes(post.id)}"
+                            class="btn" @click="liker(post.id)" :disabled="JSON.parse(post.posts_users_dislike).includes(post.id)">{{ post.posts_nb_like }}Like</button>
                   </div>
-                  <div class="col-1">
-                      <button type="button" :disabled="comments_users_disLike.includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)">Dislike</button>
+                  <div class="col-md-4">
+                      <button type="button" :disabled="JSON.parse(post.posts_users_like).includes(post.id)" class="btn btn-warning" @click="disliker(post.id)">{{ post.posts_nb_like }}Dislike</button>
                   </div>
-                  <div class="col-2">
-                  <button v-if="adminDelete()" 
+                  <div class="col-md-4">
+                  <button v-if=" adminDelete" 
                   type="button" @click="deletePost(post.id)" >Supprimez </button>
                   </div> 
                 </div>
@@ -54,15 +62,7 @@ export default {
   data() {
     return {
        posts: [],
-       posts_users_like: [],
-       posts_users_dislike: [],
-       link: "",
-       title: "",
-       content:"",
        user_id: localStorage.getItem("userId"),
-       posts_nb_like: 0,
-       posts_nb_dislike: 0,
-       like:0,
        is_Admin: localStorage.getItem("is_Admin"),
        id : window.location.href.split('/')[5],
 
@@ -74,8 +74,8 @@ export default {
   },
   methods : {
     adminDelete(){
-      if (this.is_Admin == true){return true}
-      else {return false}
+      if (this.is_Admin == true){return true;}
+      else {return false;}
     },
     
     deconnect(){
@@ -115,19 +115,11 @@ export default {
                 .catch(error => console.log(error))
         },
       goToComments(id) {
-      this.$router.push('/listposts/'+ id );
+      this.$router.push('/listposts/'+ this.id + '/listcomments');
       localStorage.setItem('postID', id)
     },
     createPost() {
       this.$router.push('/createpost/')
-    },
-
-    getAllPosts() {
-      fetch('http://localhost:3000/api/posts/')
-      .then(response => response.json() )
-      .then(data => {
-        this.posts = data
-      })
     },
     liker(id) {
 

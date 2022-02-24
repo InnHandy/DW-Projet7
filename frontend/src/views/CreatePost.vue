@@ -1,23 +1,26 @@
 <template>
     <div class="container" >
         <div class="row">
-            <div class="col-8">
+            <div class="col-md-4">
               <router-link  to="/listposts">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
              </router-link>             
              </div>
-            <div class="col-2 pt-4">
+            <div class="col-md-2 pt-4">
             <button class="btn btn-warning mb-2" type="button" @click="deconnect()">Logout</button>
           </div>
-            <div class="col-2 pt-4">
+            <div class="col-md-2 pt-4">
                 <router-link  to="/"><button class="btn btn-success" type="button">Retour</button></router-link>
             </div>
         </div>
+        <br>
+        <br>
+        <br>
         <div class="row">
-            <div class="col-6">         
-                <h2>Pour rejoindre la communauté, merci de remplir ce formulaire</h2>
+            <div class="col-md-12">        
+                <h2>Veuillez remplir votre post</h2>
                 <form v-on:submit.prevent="createpost" id="form-signup" >
                     <div class="form-group">
                 <label for="title">Titre du post :</label>
@@ -35,7 +38,7 @@
                     <button class=" btn-success">Poster</button>                                       
                 </form> 
             </div>   
-            <div class="col-1"><p>Vous avez déjà un compte ? <router-link to="/">Connectez-vous</router-link></p></div> 
+            <div class="col-md-12"><p>Vous avez déjà un compte ? <router-link to="/">Connectez-vous</router-link></p></div> 
         </div>
     </div> 
 </template>

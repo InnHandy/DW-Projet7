@@ -1,25 +1,28 @@
 <template>
 <div class="container" >
     <div class="row">
-          <div class="col-8">
+          <div class="col-md-4">
               <header>
                 <img src="../assets/icon-above-font.png" class="img-fluid" alt="Responsive image" style="width:100px">
               </header>
           </div>
-          <div class="col-2 pt-4">
+          <div class="col-md-2 pt-4">
               <router-link  to="/signup">
                 <button class="btn btn-warning mb-2" type="button">signup</button>
               </router-link>
           </div>
-          <div class="col-2 pt-4">
+          <div class="col-md-2 pt-4">
               <router-link  to="/">
                 <button class="btn btn-success" type="button">login</button>
               </router-link>
           </div>
     </div>
+    <br>
+        <br>
+        <br>
     <div class="row">
-          <div class="col-6">
-              <h2>Connectez-vous et profitez des derniers messages !</h2>
+          <div class="col-md-12">
+              <h2>Connectez-vous et profitez des derniers posts de vos collègues !</h2>
               <form v-on:submit.prevent="login" id="form-login" >
                 <div class="form-group">
                     <label for="email">E-mail :</label>
@@ -32,7 +35,7 @@
                 <br>
                 <button type="submit" class="btn btn-primary">Login</button>                                     
               </form>      
-              <div class="col-6"><p>Pas encore inscrit ? <router-link to="/signup">Rejoignez-nous !</router-link></p></div>
+              <div class="col-md-12"><p>Pas encore inscrit ? <router-link to="/signup">Rejoignez-nous !</router-link></p></div>
             </div>
     </div>
 </div>

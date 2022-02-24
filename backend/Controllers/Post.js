@@ -33,14 +33,15 @@ exports.likePost = (req, res, next) => {
     console.log('coucou')
     Post.findOne({where: {id: req.params.id}}) //({ where: { user_id: req.params.id } });
         .then((post) => {
+            console.log(post);
             let array_of_users_likes =  JSON.parse(post.posts_users_like);
             let array_of_users_dislikes =  JSON.parse(post.posts_users_dislike);
-            if(!array_of_users_likes.includes(req.body.user_id) && !array_of_users_dislikes.includes(req.body.user_id)){
+          //  if(!array_of_users_likes.includes(req.body.user_id) && !array_of_users_dislikes.includes(req.body.user_id)){
                 array_of_users_likes.push(req.body.user_id);
                 post.posts_nb_like += 1;
                 post.posts_users_like = JSON.stringify(array_of_users_likes);
                 post.save()
-                res.status(200).json('like !')}})
+                res.status(200).json('like !')})
         .catch((error) => res.status(400).json({error})) 
         
             };

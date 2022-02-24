@@ -32,14 +32,14 @@ const Comment = sequelize.define('Comment', {
         defaultValue : 0,
     }, 
     comments_users_like: {
-        type: DataTypes.JSON,
+        type: DataTypes.TEXT,
         allowNull: true,
-        defaultValue : [],
+        defaultValue : '[]',
     },
     comments_users_dislike: {
-        type: DataTypes.JSON,
+        type: DataTypes.TEXT,
         allowNull: true,
-        defaultValue : [],
+        defaultValue : '[]',
     },
 
 }, {
