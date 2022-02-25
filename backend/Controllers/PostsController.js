@@ -45,7 +45,7 @@ exports.likePost = (req, res, next) => {
             })
         .catch((error) => res.status(400).json({error}))
 
-}
+};
                 
 exports.dislikePost = (req, res, next) => {
     console.log('coucou')

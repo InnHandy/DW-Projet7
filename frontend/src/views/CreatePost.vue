@@ -32,7 +32,7 @@
               </div>
               <div class="form-group">
                 <label for="content">Link :</label>
-                <textarea type="text" id="link" name="link" rows="2" class="form-control" required v-model="inputPost.link"></textarea>
+                <textarea type="text" id="link" name="link" rows="5" class="form-control" required v-model="inputPost.link"></textarea>
               </div>
                     <br>
                     <button class=" btn-success">Poster</button>                                       

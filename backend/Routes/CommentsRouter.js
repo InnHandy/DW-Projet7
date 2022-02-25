@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const commentsCtrl = require('../Controllers/Comment');
+const commentsCtrl = require('../Controllers/CommentsController');
 const auth = require('../middleware/auth');
 
 router.get('/',auth, commentsCtrl.getAllComments);

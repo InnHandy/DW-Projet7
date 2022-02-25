@@ -37,20 +37,9 @@
           <div v-for="comment in comments" v-bind:key="comment">
               <div class="row">
                   <div class="col-md-12">
-                    <h4>Comment num {{ comment.comment_id }} <button type="button" class=" btn-info" @click="goToComment(comment.comment_id)">Voir le Commentaire</button></h4>
+                    <h4>Comment num {{ comment.comment_id }} </h4>
                     <p>{{ comment.texte }}</p>
                   </div>
-              </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <button type="button"
-                            :class="{ 'btn-primary': !JSON.parse(comment.comments_users_like).includes(comment.comment_id), 'btn-secondary': JSON.parse(comment.comments_users_like).includes(comment.comment_id)}"
-                            class="btn" @click="liker(comment.comment_id)" :disabled="JSON.parse(comment.comments_users_like).includes(comment.comment_id)">{{ comment.comments_nb_like }}Like</button>
-                  </div>
-                  <div class="col-md-6">
-                      <button type="button" :disabled="JSON.parse(comment.comments_users_dislike).includes(comment.comment_id)" class="btn btn-warning" @click="disliker(comment.comment_id)">{{ comment.comments_nb_dislike }}Dislike</button>
-                  </div>
-    
               </div>
                 <br>
               </div>
@@ -94,49 +83,9 @@ export default {
         this.comments = data
       })
     },
-    goToComment(id) {
-      this.$router.push('/listposts/' + this.postID + '/listcomments/' + id )
-    },
     createComment() {
       this.$router.push('/listposts/' + this.postID + '/listcomments/createcomment')
     },
-    liker(id) {
-      console.log('like comment ' + id);
-      let options = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("token"),
-            },
-            body: {
-              user_id: localStorage.getItem('userId')
-            }
-        };
-      fetch('http://localhost:3000/api/posts/' + this.postID + '/comments/'+ id + '/like', options)
-      .then(response => response.json() )
-      .then(data => {
-        console.log(data)});
-      this.getAllComments()
-
-    },
-    disliker(id) {
-      console.log('dislike comment ' + id);
-      let options = {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("token"),
-        },
-        body: {
-          user_id: localStorage.getItem('userId')
-        }
-      };
-      fetch('http://localhost:3000/api/posts/' + this.postID + '/comments/'+ id + '/dislike', options)
-      .then(response => response.json() ) 
-      .then(data => {
-        console.log(data)});
-      this.getAllComments()
-    }
   },
   mounted() {
     this.getAllComments();

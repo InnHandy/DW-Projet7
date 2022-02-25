@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Account from '../views/Account.vue'
-import Comment from '../views/Comment.vue'
 import CreateComment from '../views/CreateComment.vue'
 import CreatePost from '../views/CreatePost.vue'
 import Post from '../views/Post.vue'
@@ -44,11 +43,6 @@ const routes = [
     path: '/listposts/:id/listcomments',
     name: 'ListComments',
     component: ListComments
-  },
-  {
-    path: '/listposts/:id/listcomments/:comment_id',
-    name: 'Comment',
-    component: Comment,
   },
   {
     path: '/listposts/:id/listcomments/createcomment',

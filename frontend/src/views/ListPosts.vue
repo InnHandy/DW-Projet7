@@ -26,25 +26,15 @@
         <br>
         <br>
     <div class="row">    
-          <div class="col-md-12">
+          <div class="col-md-12 ">
               <h1>List des posts</h1>
               <div v-for="post in posts" v-bind:key="post">
-                <div class="row">
+                <div class="row border border-dark">
                   <div class="col-md-12">
                     <h4>Post num {{ post.id }} </h4>
                     <p><a href="{{ post.link }}">{{ post.link }}</a> </p>
                     <p>{{ post.content }}</p>
-                   <p>  <button type="button" class=" btn-info" @click="goToPost(post.id)">Voir le Post</button></p>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <button type="button"
-                            :class="{ 'btn-primary': !JSON.parse(post.posts_users_like).includes(post.id), 'btn-secondary': JSON.parse(post.posts_users_like).includes(post.id)}"
-                            class="btn" @click="liker(post.id)" :disabled="JSON.parse(post.posts_users_dislike).includes(post.id)">{{ post.posts_nb_like }}Like</button>
-                  </div>
-                  <div class="col-md-6">
-                      <button type="button" :disabled="JSON.parse(post.posts_users_like).includes(post.id)" class="btn btn-warning" @click="disliker(post.id)">{{ post.posts_nb_like }}Dislike</button>
+                   <p>  <button type="button" class=" btn-info" @click="goToPost(post.id)"> Likes et Comments</button></p>
                   </div>
                 </div>
                 <br>
@@ -88,40 +78,8 @@ export default {
         console.log(this.posts)
       })
     },
-    liker(id) {
-      let options = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("token"),
-            },
-            body: {
-              user_id: localStorage.getItem('userId')
-            }
-        };
-      fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
-      .then(response => response.json() )
-      .then(data => {
-        console.log(data)});
-      this.getAllPosts()
+  
     },
-    disliker(id) {
-      let options = {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem("token")
-        },
-        body: {
-          user_id: localStorage.getItem('userId')
-        }
-      };
-      fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
-      .then(response => response.json() )
-      .then(data => {
-        console.log(data)});
-      this.getAllPosts()
-    },},
   mounted() {
     this.getAllPosts();
   }}  

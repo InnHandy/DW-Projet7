@@ -19,9 +19,9 @@
                 <h2>Pour rejoindre la communauté, merci de remplir ce formulaire</h2>
                 <form v-on:submit.prevent="signup" id="form-signup" >
                     <div class="form-group">
-                        <label for="username">Username :</label>
-                        <input type="text" id="username" name="username" class="form-control" required 
-                        pattern="^[^&amp;<>@&quot;()'!_$*€£`+=\/;?#]+$" v-model="inputSignup.username"/>
+                        <label for="name">Name :</label>
+                        <input type="text" id="name" name="name" class="form-control" required 
+                        pattern="^[^&amp;<>@&quot;()'!_$*€£`+=\/;?#]+$" v-model="inputSignup.name"/>
                     </div> 
                     <div class="form-group">
                         <label for="email">E-mail :</label>
@@ -58,7 +58,7 @@ export default {
     data() {
         return {
             inputSignup: {
-                username: "",
+                name: "",
                 email: "",
                 password: "",
                 is_Admin: ""
@@ -68,7 +68,7 @@ export default {
     methods: {
         signup() {
             let inputDatas = {
-                "username": this.inputSignup.username,
+                "name": this.inputSignup.name,
                 "email": this.inputSignup.email,
                 "password": this.inputSignup.password,
                 "is_Admin": this.inputSignup.is_Admin

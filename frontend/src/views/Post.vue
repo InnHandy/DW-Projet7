@@ -42,7 +42,7 @@
                             class="btn" @click="liker(post.id)" :disabled="JSON.parse(post.posts_users_dislike).includes(post.id)">{{ post.posts_nb_like }}Like</button>
                   </div>
                   <div class="col-md-4">
-                      <button type="button" :disabled="JSON.parse(post.posts_users_like).includes(post.id)" class="btn btn-warning" @click="disliker(post.id)">{{ post.posts_nb_like }}Dislike</button>
+                      <button type="button" :disabled="JSON.parse(post.posts_users_like).includes(post.id)" class="btn btn-warning" @click="disliker(post.id)">{{ post.posts_nb_dislike }}Dislike</button>
                   </div>
                   <div class="col-md-4">
                   <button v-if=" adminDelete" 
@@ -99,7 +99,7 @@ export default {
     },
 
     deletePost(id) {
-            let url = `http://localhost:3000/api/post/` + id;
+            let url = `http://localhost:3000/api/posts/` + id;
             let options = {
                 method: "DELETE",
                 headers: {
@@ -110,7 +110,7 @@ export default {
                 .then((response) => {
                     console.log(response);
                     alert("Suppression du message confirmé ! 😢");
-                    window.location.reload();
+                    this.$router.push('/listposts');
                 })
                 .catch(error => console.log(error))
         },
@@ -135,8 +135,11 @@ export default {
             }
         };
       fetch('http://localhost:3000/api/posts/'+ id + '/like', options)
-
-      this.getOnePost()
+      .then(response => response.json() )
+      .then(data => {
+        console.log(data)});
+      this.getOnePost();
+      window.location.reload();
 
     },
     disliker(id) {
@@ -152,8 +155,12 @@ export default {
         }
       };
       fetch('http://localhost:3000/api/posts/'+ id + '/dislike', options)
-
-      this.getOnePost()
+      .then(response => response.json() )
+      .then(data => {
+        console.log(data)});
+      this.getOnePost();
+      window.location.reload();
+      
     }
   },
   mounted() {

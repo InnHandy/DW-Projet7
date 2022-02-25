@@ -3,8 +3,8 @@ const express = require('express');
 const app = express();
 require('dotenv').config({path:'./.env'});
 const userRoutes = require('./Routes/UsersRouter');
-const postRoutes = require('./Routes/Post');
-const commentRoutes = require('./Routes/Comment');
+const postRoutes = require('./Routes/PostsRouter');
+const commentRoutes = require('./Routes/CommentsRouter');
 
 //Erreur CORS
 app.use((req, res, next) => {
